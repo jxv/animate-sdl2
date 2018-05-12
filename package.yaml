@@ -1,0 +1,28 @@
+name: animate-sdl2
+version: '0.0.0'
+github: jxv/animate-sdl2
+license: BSD3
+category: Game
+synopsis: sdl2 + animate auxiliary library
+description: sdl2 is a commonly used media library. animate is a general animation library. Combining animate and sdl2, animate-sdl2 provides accessible glue-code to load and draw sprites.
+maintainer: Joe Vargas
+copyright: 2018 Joe Vargas
+extra-source-files:
+- package.yaml
+- README.md
+- stack.yaml
+ghc-options: -Wall
+default-extensions:
+- GeneralizedNewtypeDeriving
+- LambdaCase
+- NamedFieldPuns
+- ScopedTypeVariables
+- OverloadedStrings
+library:
+  dependencies:
+    - base >=4.7 && <5
+    - aeson >= 0.11 && <2
+    - animate >= 0.6.1 && <1
+    - sdl2 >= 2.4.0.1 && <2.5
+    - sdl2-image >=2.0.0 && <3
+  source-dirs: library
