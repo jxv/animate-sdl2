@@ -8,6 +8,7 @@ import Control.Monad (unless, when)
 import Control.Concurrent (threadDelay)
 import Data.StateVar (($=))
 import SDL.Vect (V4(..), V2(..))
+import Paths_animate_sdl2_example (getDataFileName)
 
 data DinoKey
   = DinoKey'Idle
@@ -69,11 +70,15 @@ loop renderer ss@Animate.SpriteSheet{ssAnimations, ssImage} pos = do
 
 main :: IO ()
 main = do
+  -- setup
   putStrLn "Press Space to iterate through animation keys"
   SDL.initialize [SDL.InitVideo]
   window <- SDL.createWindow "Animate Example" SDL.defaultWindow { SDL.windowInitialSize = V2 320 180 }
   renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
-  spriteSheet <- AS.loadSpriteSheetYAML renderer "dino.yaml"
+  -- load sprites
+  spriteSheet <- AS.loadSpriteSheetYamlWithPathFilter renderer getDataFileName "dino.yaml"
+  -- run
   loop renderer spriteSheet (Animate.initPosition DinoKey'Idle)
+  -- clean up
   SDL.destroyWindow window
   SDL.quit

@@ -1,7 +1,9 @@
 module Animate.SDL
   ( loadTexture
-  , loadSpriteSheetJSON
-  , loadSpriteSheetYAML
+  , loadSpriteSheetJson
+  , loadSpriteSheetYaml
+  , loadSpriteSheetJsonWithPathFilter
+  , loadSpriteSheetYamlWithPathFilter
   , unloadSpriteSheet
   , drawSprite
   , drawSpriteWithScalar
@@ -44,19 +46,39 @@ loadTexture ren filePath color = do
   SDL.freeSurface s
   return t
 
-loadSpriteSheetJSON
+loadSpriteSheetJson
   :: (KeyName key, Ord key, Bounded key, Enum key, FromJSON delay)
   => SDL.Renderer
   -> FilePath -- ^ Path of the sprite sheet info JSON file
   -> IO (SpriteSheet key SDL.Texture delay)
-loadSpriteSheetJSON ren = readSpriteSheetJSON (loadTexture ren)
+loadSpriteSheetJson ren = readSpriteSheetJSON (loadTexture ren)
 
-loadSpriteSheetYAML
+loadSpriteSheetJsonWithPathFilter
+  :: (KeyName key, Ord key, Bounded key, Enum key, FromJSON delay)
+  => SDL.Renderer
+  -> (FilePath -> IO FilePath) -- ^ Lookup image location with `getDataFileName` from Paths
+  -> FilePath -- ^ Path of the sprite sheet info JSON file
+  -> IO (SpriteSheet key SDL.Texture delay)
+loadSpriteSheetJsonWithPathFilter ren getDataFileName = readSpriteSheetJSON $ \fp c -> do
+  fp' <- getDataFileName fp
+  loadTexture ren fp' c
+
+loadSpriteSheetYaml
   :: (KeyName key, Ord key, Bounded key, Enum key, FromJSON delay)
   => SDL.Renderer
   -> FilePath -- ^ Path of the sprite sheet info YAML file
   -> IO (SpriteSheet key SDL.Texture delay)
-loadSpriteSheetYAML ren = readSpriteSheetYAML (loadTexture ren)
+loadSpriteSheetYaml ren = readSpriteSheetYAML (loadTexture ren)
+
+loadSpriteSheetYamlWithPathFilter
+  :: (KeyName key, Ord key, Bounded key, Enum key, FromJSON delay)
+  => SDL.Renderer
+  -> (FilePath -> IO FilePath) -- ^ Lookup image location with `getDataFileName` from Paths
+  -> FilePath -- ^ Path of the sprite sheet info YAML file
+  -> IO (SpriteSheet key SDL.Texture delay)
+loadSpriteSheetYamlWithPathFilter ren getDataFileName = readSpriteSheetYAML $ \fp c -> do
+  fp' <- getDataFileName fp
+  loadTexture ren fp' c
 
 unloadSpriteSheet :: SpriteSheet key SDL.Texture delay -> IO ()
 unloadSpriteSheet ss = SDL.destroyTexture $ ssImage ss
