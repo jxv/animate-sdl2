@@ -2,10 +2,10 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ec90b96f8c9ae72feb94f68a945b73e401d2cd29f68e333fb5936bfcdd68e4af
+-- hash: 023e23f9cad6f60c02a84e6cdf8bf7c97a079028e6a987a9f4baa7f0337f97fe
 
 name:           animate-sdl2
-version:        0.1.0
+version:        0.1.1
 synopsis:       sdl2 + animate auxiliary library
 description:    sdl2 is a commonly used media library. animate is a general animation library. Combining animate and sdl2, animate-sdl2 provides accessible glue-code to load and draw sprites.
 category:       Game
