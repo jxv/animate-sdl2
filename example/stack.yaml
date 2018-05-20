@@ -3,6 +3,7 @@ packages:
 - '.'
 - '..'
 extra-deps:
-- 'animate-0.6.1'
+- 'animate-0.7.0'
+- 'sdl2-fps-0.0.2'
 flags: {}
 extra-package-dbs: []

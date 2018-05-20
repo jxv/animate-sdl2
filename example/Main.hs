@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 module Main where
 
 import qualified SDL
@@ -8,6 +9,7 @@ import Control.Monad (unless, when)
 import Control.Concurrent (threadDelay)
 import Data.StateVar (($=))
 import SDL.Vect (V4(..), V2(..))
+import SDL.FPS
 import Paths_animate_sdl2_example (getDataFileName)
 
 data DinoKey
@@ -16,15 +18,7 @@ data DinoKey
   | DinoKey'Kick
   | DinoKey'Hurt
   | DinoKey'Sneak
-  deriving (Show, Eq, Ord, Bounded, Enum)
-
-instance Animate.KeyName DinoKey where
-  keyName = \case
-    DinoKey'Idle -> "Idle"
-    DinoKey'Move -> "Move"
-    DinoKey'Kick -> "Kick"
-    DinoKey'Hurt -> "Hurt"
-    DinoKey'Sneak -> "Sneak"
+  deriving (Show, Eq, Ord, Bounded, Enum, Animate.KeyName)
 
 detectSpacePressed :: SDL.EventPayload -> Bool
 detectSpacePressed event = case event of
@@ -33,22 +27,20 @@ detectSpacePressed event = case event of
     motion == SDL.Pressed &&
     not repeated
   _ -> False
-
-frameDeltaSeconds :: Float
-frameDeltaSeconds = 0.016667
-
-frameDeltaMilliseconds :: Int
-frameDeltaMilliseconds = 16
-
-delayMilliseconds :: Int -> IO ()
-delayMilliseconds ms = threadDelay (1000 * ms)
   
+fps :: Int
+fps = 60
+
+spf :: Float
+spf = 1 / fromIntegral fps
+
 loop
   :: SDL.Renderer
   -> Animate.SpriteSheet DinoKey SDL.Texture Float
   -> Animate.Position DinoKey Float
   -> IO ()
 loop renderer ss@Animate.SpriteSheet{ssAnimations, ssImage} pos = do
+  ticks <- startFrame
   -- clear screen
   SDL.rendererDrawColor renderer $= V4 0x33 0x33 0x33 0xff
   _ <- SDL.clear renderer
@@ -57,7 +49,7 @@ loop renderer ss@Animate.SpriteSheet{ssAnimations, ssImage} pos = do
   let quit = elem SDL.QuitEvent events
   let toNextKey = any detectSpacePressed events
   -- animation
-  let pos' = Animate.stepPosition ssAnimations pos frameDeltaSeconds
+  let pos' = Animate.stepPosition ssAnimations pos spf
   let clip = Animate.currentLocation ssAnimations pos'
   AS.drawSprite renderer ss clip (V2 160 100)
   SDL.present renderer
@@ -65,7 +57,7 @@ loop renderer ss@Animate.SpriteSheet{ssAnimations, ssImage} pos = do
   let pos'' = if toNextKey then Animate.initPosition (Animate.nextKey (Animate.pKey pos')) else pos'
   when toNextKey $ print $ Animate.keyName (Animate.pKey pos'')
   -- delay and loop
-  delayMilliseconds frameDeltaMilliseconds
+  endFrame fps ticks
   unless quit $ loop renderer ss pos''
 
 main :: IO ()

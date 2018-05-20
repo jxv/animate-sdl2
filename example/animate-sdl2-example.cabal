@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 788e39ee5af95fc82158f574d360ab1940426c521b23c322bccfd05227a29bec
+-- hash: 5b5cee47cf1f6edc7c70833b0af1db5bfe57a3af11370ba43ca8d510b803df68
 
 name:           animate-sdl2-example
 version:        0.0.0
@@ -46,6 +46,7 @@ executable animate-sdl2-example
     , base >=4.7 && <5
     , containers
     , sdl2
+    , sdl2-fps
     , text
   other-modules:
       Paths_animate_sdl2_example

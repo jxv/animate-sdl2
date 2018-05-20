@@ -27,13 +27,14 @@ executables:
   animate-sdl2-example:
     dependencies:
     - base >=4.7 && <5
+    - aeson
     - animate
     - animate-sdl2
-    - sdl2
     - containers
-    - text
-    - aeson
+    - sdl2-fps
+    - sdl2
     - StateVar
+    - text
     ghc-options:
     - -rtsopts
     - -threaded
